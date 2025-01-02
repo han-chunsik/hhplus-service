@@ -1,4 +1,6 @@
-# Gradle files
+data
+
+#Gradle files
 .gradle/
 build/
 

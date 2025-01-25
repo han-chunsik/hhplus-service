@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.reservation;
 
 import kr.hhplus.be.server.reservation.application.ReservationTemporary;
-import kr.hhplus.be.server.reservation.domain.repository.ReservationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ReservationIntegration100UserTest {
     @Autowired
     private ReservationTemporary reservationTemporary;
-
-    @Autowired
-    private ReservationRepository reservationRepository;
 
     @BeforeEach
     void setUp() {

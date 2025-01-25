@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.concert.domain.service;
 
+import kr.hhplus.be.server.common.aop.lock.DistributedLock;
 import kr.hhplus.be.server.concert.domain.dto.ConcertScheduleResult;
 import kr.hhplus.be.server.concert.domain.dto.ConcertSeatResult;
 import kr.hhplus.be.server.concert.domain.model.ConcertSchedule;
@@ -56,17 +57,20 @@ public class ConcertService {
                 .collect(Collectors.toList());
     }
 
+    @DistributedLock(key = "'seatId:' + #seatId")
     @Transactional
     public void deactivateSeat(Long seatId) {
-        Seat seat = concertSeatRepository.findSeatByIdWithLock(seatId)
+        Seat seat = concertSeatRepository.findSeatById(seatId)
                 .orElseThrow(() -> new ConcertException(ConcertErrorCode.SEAT_NOT_FOUND, seatId));
         seat.validateSetNotAvailableSeat();
         concertSeatRepository.save(seat);
     }
 
+
+    @DistributedLock(key = "'seatId:' + #seatId")
     @Transactional
     public void activateSeat(Long seatId) {
-        Seat seat = concertSeatRepository.findSeatByIdWithLock(seatId)
+        Seat seat = concertSeatRepository.findSeatById(seatId)
                 .orElseThrow(() -> new ConcertException(ConcertErrorCode.SEAT_NOT_FOUND, seatId));
         seat.setSeatAvailable();
         concertSeatRepository.save(seat);
@@ -74,15 +78,16 @@ public class ConcertService {
 
     @Transactional
     public Long getSeatPrice(Long seatId) {
-        Seat seat = concertSeatRepository.findSeatByIdWithLock(seatId)
+        Seat seat = concertSeatRepository.findSeatById(seatId)
                 .orElseThrow(() -> new ConcertException(ConcertErrorCode.SEAT_NOT_FOUND, seatId));
         return seat.getPrice();
     }
 
+    @DistributedLock(key = "'seatId:' + #seatId")
     @Transactional
     public void activateSeatList(List<Long> seatIdList) {
         seatIdList.stream()
-            .map(seatId -> concertSeatRepository.findSeatByIdWithLock(seatId).orElse(null))
+            .map(seatId -> concertSeatRepository.findSeatById(seatId).orElse(null))
                 .filter(Objects::nonNull)
                 .forEach(seat -> {seat.setSeatAvailable();
                 concertSeatRepository.save(seat);

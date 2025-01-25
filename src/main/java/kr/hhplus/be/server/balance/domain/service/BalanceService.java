@@ -8,6 +8,7 @@ import kr.hhplus.be.server.balance.domain.repository.BalanceHistoryRepository;
 import kr.hhplus.be.server.balance.domain.repository.BalanceRepository;
 import kr.hhplus.be.server.balance.exception.BalanceErrorCode;
 import kr.hhplus.be.server.balance.exception.BalanceException;
+import kr.hhplus.be.server.common.aop.lock.DistributedLock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ public class BalanceService {
     private final BalanceRepository balanceRepository;
     private final BalanceHistoryRepository balanceHistoryRepository;
 
+    @DistributedLock(key = "'balance:' + #userId", lockType = DistributedLock.LockType.FAIR)
     @Transactional
     public BalanceChargeResult chargeBalance(long userId, long amount) {
         // 1. 사용자 잔액 조회
@@ -42,6 +44,7 @@ public class BalanceService {
         return BalanceResult.from(userBalance);
     }
 
+    @DistributedLock(key = "'balance:' + #userId", lockType = DistributedLock.LockType.FAIR)
     @Transactional
     public BalanceChargeResult useBalance(long userId, long amount) {
         // 1. 사용자 잔액 조회

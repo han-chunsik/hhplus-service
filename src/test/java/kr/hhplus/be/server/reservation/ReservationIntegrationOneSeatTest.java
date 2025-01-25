@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.reservation;
 
 import kr.hhplus.be.server.reservation.application.ReservationTemporary;
-import kr.hhplus.be.server.reservation.domain.repository.ReservationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,9 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ReservationIntegrationOneSeatTest {
     @Autowired
     private ReservationTemporary reservationTemporary;
-
-    @Autowired
-    private ReservationRepository reservationRepository;
 
     @Nested
     @DisplayName("동시성 제어 통합 테스트")
